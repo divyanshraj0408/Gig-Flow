@@ -30,7 +30,7 @@ function Home() {
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-20 px-4">
         <div className="max-w-7xl mx-auto text-center">
-         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
             Find Your Next Opportunity
           </h1>
           <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
@@ -55,13 +55,15 @@ function Home() {
                   <button
                     type="button"
                     onClick={clearSearch}
-                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-lg transition-all"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 
+               text-gray-400 hover:text-gray-600 transition"
                   >
                     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
                 )}
+
               </div>
               <button
                 type="submit"
