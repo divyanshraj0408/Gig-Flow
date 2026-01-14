@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-
-const API_URL = 'http://localhost:5000/api/gigs';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const API_URL = `${BACKEND_URL}/api/gigs`;
 
 axios.defaults.withCredentials = true;
 

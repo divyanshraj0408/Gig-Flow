@@ -46,7 +46,7 @@ function GigDetails() {
       
       dispatch(clearSuccess());
       setShowBidForm(false);
-      setBidData({ message: '', price: '' });
+      setBidData({ message: '', price: ''});
       dispatch(fetchGigById(id));
       if (isOwner) {
         dispatch(fetchBidsForGig(id));
@@ -59,8 +59,9 @@ function GigDetails() {
     dispatch(submitBid({
       gigId: id,
       message: bidData.message,
-      price: Number(bidData.price)
+      price: Number(bidData.price),
     }));
+    // console.log('📦 SUBMITTING BID:', bidData);
   };
 
   const handleHire = (bidId) => {

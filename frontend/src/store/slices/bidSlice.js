@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-const API_URL = 'http://localhost:5000/api/bids';
+const API_URL = `${BACKEND_URL}/api/bids`;
 
 axios.defaults.withCredentials = true;
 
@@ -10,13 +11,16 @@ export const submitBid = createAsyncThunk(
   'bids/submit',
   async (bidData, { rejectWithValue }) => {
     try {
+      console.log('📦 BID DATA SENT:', bidData);
       const response = await axios.post(API_URL, bidData);
       return response.data;
     } catch (error) {
+      console.error('❌ BID ERROR:', error.response?.data);
       return rejectWithValue(error.response.data);
     }
   }
 );
+
 
 // Fetch bids for a gig
 export const fetchBidsForGig = createAsyncThunk(

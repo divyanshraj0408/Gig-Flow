@@ -10,6 +10,7 @@ const router = express.Router();
 // @desc    Submit a bid for a gig
 // @access  Private
 router.post('/', protect, async (req, res) => {
+  console.log('📦 BID SUBMISSION REQUEST:', req.body);
   try {
     const { gigId, message, price } = req.body;
 

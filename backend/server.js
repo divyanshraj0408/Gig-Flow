@@ -6,9 +6,9 @@ const http = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config();
 
-const authRoutes = require('./routes/authRoutes');
-const gigRoutes = require('./routes/gigRoutes');
-const bidRoutes = require('./routes/bidRoutes');
+// const authRoutes = require('./routes/authRoutes');
+// const gigRoutes = require('./routes/gigRoutes');
+// const bidRoutes = require('./routes/bidRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -29,9 +29,16 @@ app.set('io', io);
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: (origin, callback) => {
+    if (!origin || origin === process.env.CLIENT_URL) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
+
 
 // Socket.io connection handling
 const userSockets = new Map(); // Map userId to socketId
@@ -60,13 +67,13 @@ global.userSockets = userSockets;
 global.io = io;
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/gigs', gigRoutes);
-app.use('/api/bids', bidRoutes);
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/gigs', require('./routes/gigRoutes'));
+app.use('/api/bids', require('./routes/bidRoutes'));
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ 
+  res.json({
     status: 'Server is running',
     socketConnections: userSockets.size
   });
