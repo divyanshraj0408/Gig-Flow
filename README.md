@@ -1,4 +1,4 @@
-# GigFlow - Freelance Marketplace Platform 
+# GigFlow - Freelance Marketplace Platform  Demo Link - [[GigFlowWeb](https://gig-flow-web.onrender.com/)]
 
 A full-stack freelance marketplace where clients can post gigs and freelancers can bid on them. Built with the MERN stack.
 
@@ -201,8 +201,7 @@ gigflow/
 ```
 ## 🎥 Demo Video
 
-[Record a 2-minute Loom video showing the hiring flow]
-
+[[Drive link](https://drive.google.com/file/d/19BTzP5DThZJolcBHh4Pj6d8qwP6ah3_Y/view?usp=sharing)]
 ## 📝 License
 
 MIT License
