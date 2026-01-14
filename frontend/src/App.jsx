@@ -2,8 +2,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUser } from './store/slices/authSlice';
+import { SocketProvider } from './context/SocketContext';
 
 import Navbar from './components/Navbar';
+import NotificationCenter from './components/NotificationCenter';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -11,7 +13,7 @@ import CreateGig from './pages/CreateGig';
 import GigDetails from './pages/GigDetails';
 import MyGigs from './pages/MyGigs';
 
-import "./App.css"
+import './App.css';
 
 function App() {
   const dispatch = useDispatch();
@@ -27,31 +29,34 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route 
-            path="/create-gig" 
-            element={
-              <ProtectedRoute>
-                <CreateGig />
-              </ProtectedRoute>
-            } 
-          />
-          <Route path="/gigs/:id" element={<GigDetails />} />
-          <Route 
-            path="/my-gigs" 
-            element={
-              <ProtectedRoute>
-                <MyGigs />
-              </ProtectedRoute>
-            } 
-          />
-        </Routes>
-      </div>
+      <SocketProvider>
+        <div className="min-h-screen bg-gray-50">
+          <Navbar />
+          <NotificationCenter />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route 
+              path="/create-gig" 
+              element={
+                <ProtectedRoute>
+                  <CreateGig />
+                </ProtectedRoute>
+              } 
+            />
+            <Route path="/gigs/:id" element={<GigDetails />} />
+            <Route 
+              path="/my-gigs" 
+              element={
+                <ProtectedRoute>
+                  <MyGigs />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+        </div>
+      </SocketProvider>
     </Router>
   );
 }

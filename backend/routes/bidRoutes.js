@@ -60,6 +60,21 @@ router.post('/', protect, async (req, res) => {
 
     await bid.populate('freelancerId', 'name email');
 
+    // Send real-time notification to gig owner
+    const io = global.io;
+    const userSockets = global.userSockets;
+    const ownerSocketId = userSockets.get(gig.ownerId.toString());
+    
+    if (ownerSocketId) {
+      io.to(ownerSocketId).emit('new_bid', {
+        gigId: gig._id,
+        gigTitle: gig.title,
+        bidderName: req.user.name,
+        bidAmount: price,
+        message: `${req.user.name} placed a bid of $${price} on "${gig.title}"`
+      });
+    }
+
     res.status(201).json({
       success: true,
       bid
@@ -112,7 +127,7 @@ router.get('/:gigId', protect, async (req, res) => {
 });
 
 // @route   PATCH /api/bids/:bidId/hire
-// @desc    Hire a freelancer (ATOMIC OPERATION WITH TRANSACTION)
+// @desc    Hire a freelancer (ATOMIC OPERATION WITH SOCKET NOTIFICATION)
 // @access  Private
 router.patch('/:bidId/hire', protect, async (req, res) => {
   const session = await mongoose.startSession();
@@ -122,6 +137,7 @@ router.patch('/:bidId/hire', protect, async (req, res) => {
     // Find the bid with session
     const bid = await Bid.findById(req.params.bidId)
       .populate('gigId')
+      .populate('freelancerId', 'name email')
       .session(session);
 
     if (!bid) {
@@ -180,6 +196,41 @@ router.patch('/:bidId/hire', protect, async (req, res) => {
 
     // Commit the transaction
     await session.commitTransaction();
+
+    // 🔥 REAL-TIME NOTIFICATION TO HIRED FREELANCER
+    const io = global.io;
+    const userSockets = global.userSockets;
+    const freelancerSocketId = userSockets.get(bid.freelancerId._id.toString());
+    
+    if (freelancerSocketId) {
+      console.log(`🎉 Sending hire notification to ${bid.freelancerId.name}`);
+      io.to(freelancerSocketId).emit('hired', {
+        gigId: gig._id,
+        gigTitle: gig.title,
+        gigBudget: gig.budget,
+        clientName: req.user.name,
+        bidAmount: bid.price,
+        message: `Congratulations! You have been hired for "${gig.title}"!`
+      });
+    }
+
+    // Also notify rejected bidders
+    const rejectedBids = await Bid.find({
+      gigId: gig._id,
+      _id: { $ne: bid._id },
+      status: 'rejected'
+    }).populate('freelancerId', 'name email');
+
+    rejectedBids.forEach(rejectedBid => {
+      const rejectedSocketId = userSockets.get(rejectedBid.freelancerId._id.toString());
+      if (rejectedSocketId) {
+        io.to(rejectedSocketId).emit('bid_rejected', {
+          gigId: gig._id,
+          gigTitle: gig.title,
+          message: `Your bid for "${gig.title}" was not selected. Keep trying!`
+        });
+      }
+    });
 
     // Fetch updated bid
     const updatedBid = await Bid.findById(bid._id)
