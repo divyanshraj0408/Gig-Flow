@@ -16,7 +16,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (isAuthenticated && user) {
       // Connect to Socket.io server
-      const newSocket = io('http://localhost:5000', {
+      const newSocket = io(import.meta.env.VITE_BACKEND_URL, {
         withCredentials: true,
         transports: ['websocket', 'polling']
       });
