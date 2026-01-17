@@ -10,7 +10,7 @@ function MyGigs() {
   useEffect(() => {
     const fetchMyGigs = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/gigs/my/posted', {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/gigs/my/posted`, {
           withCredentials: true
         });
         setMyGigs(response.data.gigs);
